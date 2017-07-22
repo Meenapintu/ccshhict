@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Cropper.js</title>
+  <link rel="stylesheet" href="../dist/cropper.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <style>
+    .container {
+      margin: auto;
+    }
+    
+    img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+    
+    .row,
+    .preview {
+      overflow: hidden;
+    }
+    
+    .col {
+      float: left;
+    }
+    
+    .col-6 {
+      width: 50%;
+      min-height: 1024px;
+      min-width: 1024px;
+      display: none;
+    }
+    
+    .col-3 {
+      width: 25%;
+    }
+    
+    .col-2 {
+      width: 16.7%;
+    }
+    
+    .col-1 {
+      width: 8.3%;
+    }
+    .button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Cropperjs with cloud image storage and heroku nodejs hosting example </h1>
+    <div class="row">
+      <div class="col col-6" id="col6" >
+        <img id="image" src="../images/picture.jpg" alt="Picture">
+      </div>
+      <div class="col col-1">
+        <div class="text"> 380 x 380</div>
+        <input type="file" onchange="update(this)" name="filename" class="fup" accept='image/*' id="0" />
+      </div>
+      <div class="col col-3">
+        <div class="preview"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col col-6" id="col6">
+        <img id="image" src="../images/picture.jpg" alt="uploaded image will be shown here" class="fupimg">
+      </div>
+      <div class="col col-1">
+        <div class="text"> 380 x 380</div>
+        <input type="file" onchange="update(this)" name="filename" class="fup" id="1" />
+      </div>
+      <div class="col col-3">
+        <div class="preview"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col col-6" id="col6">
+        <img id="image" src="../images/picture.jpg" alt="Picture">
+      </div>
+      <div class="col col-1">
+        <div class="text"> 380 x 380</div>
+        <input type="file" onchange="update(this)" name="filename" class="fup" id="2" />
+      </div>
+      <div class="col col-3">
+        <div class="preview"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col col-6" id="col6">
+        <img id="image" src="../images/picture.jpg" alt="Picture">
+      </div>
+      <div class="col col-1">
+        <div class="text"> 380 x 380</div>
+        <input type="file" onchange="update(this)" name="filename" class="fup" id="3" />
+      </div>
+      <div class="col col-3">
+        <div class="preview"></div>
+      </div>
+
+    </div>
+        <div class="row center">
+              <button class="button" min-width="30px" type="button"  onclick="clickme()">Upload</button>
+        </div>
+  </div>
+  </div>
+  </div>
+
+  <script src="../dist/cropper.js"></script>
+  <script>
+    function each(arr, callback) {
+      var length = arr.length;
+      var i;
+
+      for (i = 0; i < length; i++) {
+        callback.call(arr, arr[i], i, arr);
+      }
+
+      return arr;
+    }
+
+    function update(fup) {
+
+
+      if (fup.files && fup.files[0]) {
+        var filedir = new Image();
+        var _URL = window.URL || window.webkitURL;
+
+        filedir.onload = function () {
+
+          //alert(fup.files[0].name.split('.').pop());
+          if (this.width == 1024 && this.height == 1024) {
+            $(fup).parent().siblings().show();
+            $(fup).siblings('.text').css('color','green');
+            $(fup).parent().siblings('#col6').find('#image').attr('src', this.src);
+              var mdata = fup.files[0].name.split('.');
+              
+            setcropper($(fup).attr('id'), $(fup).parent().siblings().find('#image')[0],mdata.pop(),mdata);
+            $(fup).hide();
+          }
+          else {
+            $(fup).siblings('.text').css('color','red');
+            alert("Wrong size image(" + this.width + "x" + this.height + "), expected size is 1024x1024");
+
+          }
+
+
+        };
+        filedir.src = _URL.createObjectURL(fup.files[fup.files.length-1]);
+      }
+
+     
+
+
+    }
+
+
+    var dim = [{ h: 755, w: 755 }, { h: 365, w: 450 }, { h: 365, w: 212 }, { h: 380, w: 380 }];
+
+
+    var cropper = [];
+   
+
+    function setcropper(k, imgs, extension,name) {
+        if(k<cropper.length){
+          
+          cropper[k].objcrop.replace($(imgs).attr('src'));
+          cropper[k].objcrop.reset();
+        
+        }
+      else{
+        if(k<cropper.length)
+          cropper[k].objcrop.destroy();
+
+       var obj = {};
+       obj.extension = extension;
+       obj.name = name;
+        obj.objcrop = new Cropper(imgs, {
+        dragMode: 'move',
+        cropBoxResizable: false,
+        toggleDragModeOnDblclick: false,
+        zoomOnTouch: false,
+        zoomable: false,
+        movable: false,
+        restore: false,
+        guides: false,
+        center: false,
+        highlight: false,
+
+        ready: function () {
+          var clone = this.cloneNode();
+
+          clone.className = ''
+          clone.style.cssText = (
+            'display: block;' +
+
+            'min-width: 0;' +
+            'min-height: 0;' +
+            'max-width: none;' +
+            'max-height: none;'
+          );
+
+          var cropd = this.cropper;
+          cropd.setCropBoxData({ width: dim[k].w, height: dim[k].h });
+    
+
+          var elem = $(imgs).parent().siblings().children('.preview');
+          $(imgs).parent().siblings().children('.text').html(dim[k].w + "x" + dim[k].h);
+
+          $(elem).append(clone.cloneNode());
+
+        },
+
+        crop: function (e) {
+          var data = e.detail;
+          var cropper = this.cropper;
+
+          var imageData = cropper.getImageData();
+          var previewAspectRatio = data.width / data.height;
+
+          var elem = $(imgs).parent().siblings().children('.preview');
+          var previewImage = $(elem).find('img');
+          var previewWidth = $(elem).outerWidth();
+          var previewHeight = previewWidth / previewAspectRatio;
+          var imageScaledRatio = data.width / previewWidth;
+
+
+          $(elem).css('height', previewHeight + 'px');
+          $(previewImage).css({
+            'width': imageData.naturalWidth / imageScaledRatio + 'px',
+            'height': imageData.naturalHeight / imageScaledRatio + 'px',
+            'marginLeft': -data.x / imageScaledRatio + 'px',
+            'marginTop': -data.y / imageScaledRatio + 'px'
+          })
+
+        }
+      });
+        
+       cropper.push(obj);
+      }
+    //  );
+
+      //if(k < (imgs.length-1))
+      //  setcropper(k+1,imgs);
+    }
+
+
+
+    window.addEventListener('DOMContentLoaded', function () {
+
+
+      var texts = $('.text');
+      each(texts, function (text) {
+        $(text).html(dim[$(text).siblings('input').attr('id')].w + "x" + dim[$(text).siblings('input').attr('id')].h + "  upload an image of size 1024x1024")
+      });
+    });
+
+
+
+    function ajexupload(ij, formData) {
+      cropper[ij].objcrop.getCroppedCanvas({ width: dim[ij].w, height: dim[ij].h }).toBlob(function (blob) {
+
+        
+
+        formData.append('filename', blob,cropper[ij].name+ dim[ij].w +"x"+ dim[ij].h+"."+cropper[ij].extension);
+
+        if (ij == (cropper.length - 1)) {
+          $.ajax('/upload', {
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (resp) {
+              console.log('Upload success'+resp);
+              window.localStorage.setItem("datajson",JSON.stringify(resp));
+              window.location = 'showimages'
+            },
+            error: function () {
+              console.log('Upload error');
+              alert("upload error, try again");
+            }
+          });
+        }
+        else {
+          ajexupload(++ij, formData);
+        }
+
+      }, 'image/'+cropper[ij].extension, 1.00);
+    }
+
+
+
+
+    function clickme() {
+  
+      var formData = new FormData();
+      var ij = 0;
+      if(cropper.length ==4){
+       
+      ajexupload(ij, formData);
+     }
+    else{
+       alert("Please upload all required images");
+     }
+
+     
+
+    }
+  </script>
+
+
+</body>
+
+</html>

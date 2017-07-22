@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+
+    <img src="#" alt = "GameBanner" name="gameplay" id="gameplay" />
+       <img src="#" alt = "GameBanner" name="gameplay" id="gameplay" />
+           <img src="#" alt = "GameBanner" name="gameplay" id="gameplay" />
+            <img src="#" alt = "GameBanner" name="gameplay" id="gameplay" />
+
+
+</body>
+
+<script>
+
+    window.addEventListener('DOMContentLoaded', function () {
+
+    var retrievedObject = window.localStorage.getItem("datajson");
+    var imu = JSON.parse(retrievedObject);
+
+    console.log('retrievedObject: ', imu);
+
+        var images = $('img');
+        var i=0;
+        for(var i=0;i<images.length;i++)
+        {
+              images[i].setAttribute("src",imu[i].url);
+        }
+      
+
+    });
+    </script>
+</html>
