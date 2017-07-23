@@ -30,7 +30,7 @@ app.post('/', function (req, res) {
 })
 
 
-// This responds a GET request for the /list_user page.
+
 app.get('/a3', function (req, res) {
    console.log(req.host);
    res.sendFile(__dirname+'/htmls/cropimage.html')
